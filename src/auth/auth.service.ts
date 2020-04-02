@@ -4,7 +4,7 @@ import {
   ConflictException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { RegisterDTO, LoginDTO } from 'src/model/user.dto';
+import { RegisterDTO, LoginDTO, UpdateUserDTO } from 'src/model/user.dto';
 import { Repository } from 'typeorm';
 import { UserEntity } from 'src/entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -48,5 +48,20 @@ export class AuthService {
       }
       throw new InternalServerErrorException();
     }
+  }
+
+  async findCurrentUser(username: string) {
+    const user = await this.userRepository.findOne({ where: { username } });
+    const payload = { username };
+    const token = this.jwtService.sign(payload);
+    return { user: { ...user.toJSON(), token } };
+  }
+
+  async updateUser(username: string, data: UpdateUserDTO) {
+    await this.userRepository.update({ username }, data);
+    const user = await this.userRepository.findOne({ where: { username } });
+    const payload = { username };
+    const token = this.jwtService.sign(payload);
+    return { user: { ...user.toJSON(), token } };
   }
 }
