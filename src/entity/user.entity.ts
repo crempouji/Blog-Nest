@@ -5,11 +5,14 @@ import {
   Unique,
   JoinTable,
   ManyToMany,
+  OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { AbstractEntity } from './abstract-entity';
 import { IsEmail } from 'class-validator';
 import { Exclude, classToPlain } from 'class-transformer';
 import * as bcrypt from 'bcryptjs';
+import { ArticleEntity } from './article.entity';
 
 @Entity('user')
 @Unique(['username'])
@@ -43,6 +46,19 @@ export class UserEntity extends AbstractEntity {
     user => user.followers,
   )
   followee: UserEntity[];
+
+  @OneToMany(
+    type => ArticleEntity,
+    article => article.author,
+  )
+  articles: ArticleEntity[];
+
+  @ManyToMany(
+    type => ArticleEntity,
+    article => article.favoritedBy,
+  )
+  @JoinColumn()
+  favorites: ArticleEntity[];
 
   @BeforeInsert()
   async hashPasssword() {

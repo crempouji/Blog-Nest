@@ -6,6 +6,7 @@ import { TypeOrmConfigService } from './config/typeorm.config';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { ArticleModule } from './article/article.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UserModule } from './user/user.module';
     }),
     AuthModule,
     UserModule,
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
