@@ -7,12 +7,14 @@ import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ArticleModule } from './article/article.module';
+import { TagEntity } from './entity/tag.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
+    TypeOrmModule.forFeature([TagEntity]),
     AuthModule,
     UserModule,
     ArticleModule,

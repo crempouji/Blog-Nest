@@ -7,12 +7,14 @@ import {
   ManyToMany,
   OneToMany,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { AbstractEntity } from './abstract-entity';
 import { IsEmail } from 'class-validator';
 import { Exclude, classToPlain } from 'class-transformer';
 import * as bcrypt from 'bcryptjs';
 import { ArticleEntity } from './article.entity';
+import { CommentEntity } from './comment.entity';
 
 @Entity('user')
 @Unique(['username'])
@@ -52,6 +54,12 @@ export class UserEntity extends AbstractEntity {
     article => article.author,
   )
   articles: ArticleEntity[];
+
+  @OneToMany(
+    type => CommentEntity,
+    comment => comment.author,
+  )
+  comments: CommentEntity[];
 
   @ManyToMany(
     type => ArticleEntity,

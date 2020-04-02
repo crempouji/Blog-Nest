@@ -21,10 +21,15 @@ import {
   FindFeedQuery,
 } from 'src/model/article.dto';
 import { OptionalAuthGuard } from 'src/auth/optional.auth.guard';
+import { CommentsService } from './comments.service';
+import { CreateCommentDTO } from 'src/model/comment.dto';
 
 @Controller('articles')
 export class ArticleController {
-  constructor(private articleService: ArticleService) {}
+  constructor(
+    private articleService: ArticleService,
+    private commentService: CommentsService,
+  ) {}
 
   @Get()
   @UseGuards(OptionalAuthGuard)
@@ -94,5 +99,30 @@ export class ArticleController {
   ) {
     const article = await this.articleService.unfavoriteArticle(slug, user);
     return { article };
+  }
+
+  // Commentary parts
+
+  @Get('/:slug/comments')
+  async findComments(@Param('slug') slug: string) {
+    const comments = await this.commentService.findByArticleSlug(slug);
+    return { comments };
+  }
+
+  @Post('/:slug/comments')
+  @UseGuards(AuthGuard())
+  async createComment(
+    @User() user: UserEntity,
+    @Body(ValidationPipe) data: { comment: CreateCommentDTO },
+  ) {
+    const comment = await this.commentService.createComment(user, data.comment);
+    return { comment };
+  }
+
+  @Delete('/:slug/comments/:id')
+  @UseGuards(AuthGuard())
+  async deleteComment(@Param('id') id: number, @User() user: UserEntity) {
+    const comment = await this.commentService.deleteComment(user, id);
+    return comment;
   }
 }
